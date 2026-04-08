@@ -1,16 +1,10 @@
 @import "tailwindcss";
+@import "@fontsource-variable/inter";
 
 @custom-variant dark (&:is(.dark *));
 
-@font-face {
-  font-family: "Helvetica Now";
-  src: url("/fonts/HelveticaNowVar.ttf") format("truetype");
-  font-weight: 100 900;
-  font-display: swap;
-}
-
 @theme inline {
-  --font-sans: "Helvetica Now", system-ui, sans-serif;
+  --font-sans: "Inter Variable", system-ui, sans-serif;
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));

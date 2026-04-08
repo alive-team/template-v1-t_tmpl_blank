@@ -1,6 +1,6 @@
 import path from "node:path"
 import tailwindcss from "@tailwindcss/vite"
-import react from "@vitejs/plugin-react-swc"
+import react from "@vitejs/plugin-react"
 import { aliveTagger } from "@alive-game/alive-tagger"
 import { defineConfig } from "vite"
 
