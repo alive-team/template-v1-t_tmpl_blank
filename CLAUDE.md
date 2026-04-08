@@ -1,78 +1,58 @@
-# Project Architecture Documentation
+# tmpl_blank
 
-⚠️ **IMPORTANT**: You MUST update this CLAUDE.md file whenever:
-- Creating a new site from this template
-- Making significant architectural changes to the project
-- Adding new frameworks, libraries, or major features
-- Changing the file structure or development workflow
+Blank starter template. Single page, ready to build on.
 
-## Framework: React + Vite + TypeScript
+## Stack
 
-This is a **React application** built with Vite and TypeScript. The architecture follows modern React patterns.
+- **Frontend**: React 19, Vite 8, TypeScript
+- **Routing**: TanStack Router (code-based, defined in `src/main.tsx`)
+- **State**: Zustand (stores), TanStack Query (server state)
+- **Styling**: Tailwind CSS 4 (CSS-first config in `src/index.css`), shadcn/ui (Radix primitives)
+- **Linting**: Biome (`biome.json`)
+- **API server**: Hono + bun:sqlite (`server.ts`)
+- **Runtime**: Bun
 
-## 🚨 CRITICAL: Where Content Lives
-
-**FOR CONTENT CHANGES, EDIT THESE FILES:**
-- `src/pages/Index.tsx` - Main page content (THIS IS WHERE THE REAL CONTENT IS)
-- `src/pages/` - Other page components
-- `src/components/` - Reusable UI components
-
-**DO NOT EDIT THESE FILES FOR CONTENT:**
-- `index.html` - Just a shell/entry point, not the actual page content
-- `src/index.html` - If it exists, it's also just an entry point
-
-## Architecture Overview
+## File Structure
 
 ```
-user/
-├── index.html          ← Entry point only (loads React app)
-├── src/
-│   ├── main.tsx        ← App initialization
-│   ├── pages/
-│   │   └── Index.tsx   ← MAIN CONTENT LIVES HERE
-│   ├── components/     ← Reusable components
-│   └── lib/           ← Utilities
-├── package.json        ← Dependencies
-└── vite.config.ts     ← Build configuration
+src/
+  main.tsx          -- App entry + route definitions
+  index.css         -- Tailwind 4 theme + design tokens
+  pages/            -- Page components (one per route)
+  components/       -- Reusable components
+  components/ui/    -- shadcn/ui primitives
+  hooks/            -- Custom hooks
+  lib/              -- Utilities (utils.ts, db.ts)
+server.ts           -- Hono API server (bun:sqlite backend)
+vite.config.ts      -- Vite config + Tailwind plugin
+biome.json          -- Linter/formatter config
+tsconfig.json       -- TypeScript config
 ```
 
-## Development
+## Routing
 
-- **Start dev server:** `bun run dev`
-- **Build:** `bun run build`
-- **Live reload:** Automatic via Vite HMR
+Routes are defined in `src/main.tsx` using code-based TanStack Router:
+- `/` - `src/pages/Index.tsx`
+- `*` (404) - `src/pages/NotFound.tsx`
 
-## Common Tasks
+Add new routes by creating a page in `src/pages/`, then adding a `createRoute()` call in `main.tsx`.
 
-1. **Change page content:** Edit `src/pages/Index.tsx`
-2. **Add components:** Create in `src/components/`
-3. **Add routing:** Use React Router in `src/main.tsx`
-4. **Style changes:** Edit component files or global CSS
+For navigation, use `<Link to="...">` from `@tanstack/react-router`. Never use `<a href>` for internal links.
 
-## Project Purpose
+## Design System
 
-[REPLACE THIS: Describe what this specific website/project does]
+Colors and theme tokens are CSS custom properties in `src/index.css`. The `@theme inline` block maps them to Tailwind utilities (`bg-background`, `text-foreground`, etc.). Edit the `:root` block to change colors.
 
-## Navigation
+## API
 
-Uses React Router's `<Link>` components for client-side navigation:
-- **DO NOT** use `<a href="...">` (causes page reloads)
-- **DO** use `<Link to="...">` for internal navigation
+`server.ts` runs a Hono server on PORT+1000. Vite proxies `/api/*` to it in dev. In production, the Hono server serves both the API and the built static files.
 
-## Important Notes
+Add API routes in `server.ts`. The SQLite database (`data.db`) is available via `bun:sqlite`.
 
-- This uses Vite for fast development and building
-- Hot Module Replacement (HMR) provides instant updates
-- TypeScript provides type safety
-- Tailwind CSS for styling (if configured)
-- Client-side routing with react-router-dom prevents page reloads
+## Commands
 
-## [Claude Planning Mode]
-
-**ALWAYS use this systematic planning approach for any task:**
-
-**Boxes to Tick:** 1,2,3,4 (max 8)...
-**Questions to Answer:** same
-**Proof Strategy:** 1,2,... 8 to get the proof how you fix my prompt
-
-This ensures systematic problem-solving with clear deliverables and verification steps.
+- `bun run dev` -- Start frontend + API (concurrent)
+- `bun run build` -- Production build
+- `bun run serve` -- Production server
+- `bun run check` -- Lint + format check (Biome)
+- `bun run check:fix` -- Auto-fix lint/format issues
