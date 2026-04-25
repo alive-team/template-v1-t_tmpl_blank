@@ -1,0 +1,18 @@
+# Declarative project config consumed by alive-workspaced.
+# Schema reference: apps/workspaced/internal/config/config.go
+schema = 1
+
+[project]
+root = "."
+
+[dev]
+# alive-workspaced supervises this command. The daemon publishes the declared
+# port via /meta so the Go preview proxy can discover the dev server before
+# vite has bound its socket.
+command = "bun run dev"
+port = 5173
+
+[dev.env]
+# server.ts (hono API) reads API_PORT first, then PORT, then 4000. Without
+# this, server.ts would race vite for PORT=5173 and one of them would crash.
+API_PORT = "6173"
