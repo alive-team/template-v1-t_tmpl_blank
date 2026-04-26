@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
 	server: {
 		host: "::",
 		port: PORT,
-		allowedHosts: ["blank.alive.best"],
+		allowedHosts: [".alive.site"],
 		hmr: {
 			protocol: "wss",
 			clientPort: 443,
@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => ({
 	preview: {
 		host: "::",
 		port: PORT,
-		allowedHosts: ["blank.alive.best"],
+		allowedHosts: [".alive.site"],
 	},
 	plugins: [
 		react(),
