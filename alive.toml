@@ -16,3 +16,9 @@ port = 5173
 # server.ts (hono API) reads API_PORT first, then PORT, then 4000. Without
 # this, server.ts would race vite for PORT=5173 and one of them would crash.
 API_PORT = "6173"
+[setup]
+# Run by alive-workspaced before [dev] starts. The daemon hashes gate_on and
+# only re-runs `command` when that hash changes. Stamp lives at .alive/install.stamp.
+command = "bun install --no-progress"
+gate_on = "bun.lock"
+timeout_seconds = 180
