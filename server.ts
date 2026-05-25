@@ -29,7 +29,14 @@ app.use(
   }),
 )
 
-// Health check
+// Health check — matches `health_path = "/health"` in alive.toml so the
+// alive-workspaced daemon (and Claude's `probe_health` MCP tool, epic
+// alive-home/alive#2273 PR8) can verify the api service is responsive.
+app.get("/health", c => {
+  return c.json({ ok: true })
+})
+
+// Legacy alias preserved for any existing callers under /api/*.
 app.get("/api/health", c => {
   return c.json({ status: "ok", timestamp: new Date().toISOString() })
 })

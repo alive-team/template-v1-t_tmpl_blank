@@ -1,24 +1,43 @@
 # Declarative project config consumed by alive-workspaced.
-# Schema reference: apps/workspaced/internal/config/config.go
+# Schema reference: apps/workspaced/internal/config/config.go (alive-home/alive)
 schema = 1
 
 [project]
 root = "."
 
-[dev]
-# alive-workspaced supervises this command. The daemon publishes the declared
-# port via /meta so the Go preview proxy can discover the dev server before
-# vite has bound its socket.
-command = "bun run dev"
-port = 5173
+# Multi-service supervision (epic alive-home/alive#2273, PR4 #2301).
+# The daemon supervises each service as its own pid, exposes per-service
+# state at /meta.services, and lets Claude restart them independently via
+# /restart-service?name=<n>. No more `concurrently` hiding two processes
+# behind one parent — install races and interleaved logs are gone.
 
-[dev.env]
-# server.ts (hono API) reads API_PORT first, then PORT, then 4000. Without
-# this, server.ts would race vite for PORT=5173 and one of them would crash.
+[dev.services.web]
+command = "vite"
+port = 5173
+health_path = "/"
+kind = "frontend"
+
+[dev.services.api]
+command = "bun run server.ts"
+port = 6173
+health_path = "/health"
+kind = "backend"
+
+[dev.services.api.env]
+# server.ts reads API_PORT to pick its bind port. Without this, it would
+# fall back to PORT (5173) and collide with vite.
 API_PORT = "6173"
+
 [setup]
-# Run by alive-workspaced before [dev] starts. The daemon hashes gate_on and
-# only re-runs `command` when that hash changes. Stamp lives at .alive/install.stamp.
+# Run by alive-workspaced before any dev service starts. Runs unconditionally
+# on every daemon boot — `bun install` is idempotent (~200ms no-op on a
+# populated lockfile). The legacy `gate_on` hash gate was deleted in
+# alive-home/alive#2273 PR1.
 command = "bun install --no-progress"
-gate_on = "bun.lock"
 timeout_seconds = 180
+
+[setup.produces]
+# Declarative output: the daemon stat()s these after setup completes and
+# reports presence via /meta. Consumed by Phase 3 (PR5 alive-home/alive#2278);
+# silently ignored by the current daemon (unknown keys are forward-compatible).
+node_modules = "./node_modules"
