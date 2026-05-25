@@ -29,7 +29,11 @@ app.use(
   }),
 )
 
-// Health check
+// Health check (alive.toml declares health_path = "/health" for the api service)
+app.get("/health", c => {
+  return c.json({ status: "ok" })
+})
+
 app.get("/api/health", c => {
   return c.json({ status: "ok", timestamp: new Date().toISOString() })
 })

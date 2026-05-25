@@ -1,24 +1,26 @@
-# Declarative project config consumed by alive-workspaced.
-# Schema reference: apps/workspaced/internal/config/config.go
 schema = 1
 
 [project]
 root = "."
 
-[dev]
-# alive-workspaced supervises this command. The daemon publishes the declared
-# port via /meta so the Go preview proxy can discover the dev server before
-# vite has bound its socket.
-command = "bun run dev"
+[dev.services.web]
+command = "vite"
 port = 5173
+health_path = "/"
+kind = "frontend"
 
-[dev.env]
-# server.ts (hono API) reads API_PORT first, then PORT, then 4000. Without
-# this, server.ts would race vite for PORT=5173 and one of them would crash.
+[dev.services.api]
+command = "bun run server.ts"
+port = 6173
+health_path = "/health"
+kind = "backend"
+
+[dev.services.api.env]
 API_PORT = "6173"
+
 [setup]
-# Run by alive-workspaced before [dev] starts. The daemon hashes gate_on and
-# only re-runs `command` when that hash changes. Stamp lives at .alive/install.stamp.
 command = "bun install --no-progress"
-gate_on = "bun.lock"
 timeout_seconds = 180
+
+[setup.produces]
+node_modules = "./node_modules"
