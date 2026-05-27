@@ -5,7 +5,6 @@ import { aliveTagger } from "@alive-game/alive-tagger"
 import { defineConfig } from "vite"
 
 const PORT = Number(process.env.PORT) || 3594
-const API_PORT = PORT + 1000
 
 export default defineConfig(({ mode }) => ({
 	server: {
@@ -15,12 +14,6 @@ export default defineConfig(({ mode }) => ({
 		hmr: {
 			protocol: "wss",
 			clientPort: 443,
-		},
-		proxy: {
-			"/api": {
-				target: `http://localhost:${API_PORT}`,
-				changeOrigin: true,
-			},
 		},
 	},
 	preview: {

@@ -5,28 +5,16 @@ schema = 1
 [project]
 root = "."
 
-# Multi-service supervision (epic alive-home/alive#2273, PR4 #2301).
-# The daemon supervises each service as its own pid, exposes per-service
-# state at /meta.services, and lets Claude restart them independently via
-# /restart-service?name=<n>. No more `concurrently` hiding two processes
-# behind one parent — install races and interleaved logs are gone.
+# Single-service supervision under the multi-service config shape
+# (epic alive-home/alive#2273, PR4 #2301). The frontend is the only
+# service in the blank template — add more [dev.services.<name>] tables
+# (e.g. an `api` service) when the site grows a backend.
 
 [dev.services.web]
 command = "vite"
 port = 5173
 health_path = "/"
 kind = "frontend"
-
-[dev.services.api]
-command = "bun run server.ts"
-port = 6173
-health_path = "/health"
-kind = "backend"
-
-[dev.services.api.env]
-# server.ts reads API_PORT to pick its bind port. Without this, it would
-# fall back to PORT (5173) and collide with vite.
-API_PORT = "6173"
 
 [setup]
 # Run by alive-workspaced before any dev service starts. Runs unconditionally
