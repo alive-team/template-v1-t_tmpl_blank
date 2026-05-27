@@ -9,7 +9,6 @@ Blank starter template. Single page, ready to build on.
 - **State**: Zustand (stores), TanStack Query (server state)
 - **Styling**: Tailwind CSS 4 (CSS-first config in `src/index.css`), shadcn/ui (Radix primitives)
 - **Linting**: Biome (`biome.json`)
-- **API server**: Hono + bun:sqlite (`server.ts`)
 - **Runtime**: Bun
 
 ## File Structure
@@ -22,8 +21,7 @@ src/
   components/       -- Reusable components
   components/ui/    -- shadcn/ui primitives
   hooks/            -- Custom hooks
-  lib/              -- Utilities (utils.ts, db.ts)
-server.ts           -- Hono API server (bun:sqlite backend)
+  lib/              -- Utilities (utils.ts)
 vite.config.ts      -- Vite config + Tailwind plugin
 biome.json          -- Linter/formatter config
 tsconfig.json       -- TypeScript config
@@ -43,16 +41,14 @@ For navigation, use `<Link to="...">` from `@tanstack/react-router`. Never use `
 
 Colors and theme tokens are CSS custom properties in `src/index.css`. The `@theme inline` block maps them to Tailwind utilities (`bg-background`, `text-foreground`, etc.). Edit the `:root` block to change colors.
 
-## API
+## Adding a backend
 
-`server.ts` runs a Hono server on PORT+1000. Vite proxies `/api/*` to it in dev. In production, the Hono server serves both the API and the built static files.
-
-Add API routes in `server.ts`. The SQLite database (`data.db`) is available via `bun:sqlite`.
+This template is frontend-only. If the site needs a server, add a new service to `alive.toml` under `[dev.services.<name>]` (e.g. `api`) with its own command, port, and `health_path`. The alive-workspaced daemon will supervise it alongside the `web` service.
 
 ## Commands
 
-- `bun run dev` -- Start frontend + API (concurrent)
+- `vite` -- Start dev server (supervised by alive-workspaced via `alive.toml`)
 - `bun run build` -- Production build
-- `bun run serve` -- Production server
+- `bun run preview` -- Serve the production build locally
 - `bun run check` -- Lint + format check (Biome)
 - `bun run check:fix` -- Auto-fix lint/format issues

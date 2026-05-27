@@ -6,13 +6,11 @@
   "scripts": {
     "build": "vite build",
     "preview": "vite preview",
-    "serve": "NODE_ENV=production bun run server.ts",
     "check": "biome check .",
     "check:fix": "biome check --fix ."
   },
   "dependencies": {
     "@alive-game/alive-tagger": "0.1.4",
-    "@hono/node-server": "^1.19.13",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -48,7 +46,6 @@
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.6.0",
-    "hono": "^4.12.12",
     "input-otp": "^1.4.2",
     "lucide-react": "^1.7.0",
     "next-themes": "^0.4.6",
