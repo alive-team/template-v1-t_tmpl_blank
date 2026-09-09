@@ -31,9 +31,10 @@ API_PORT = "6173"
 [setup]
 # Run by alive-workspaced before any dev service starts. Runs unconditionally
 # on every daemon boot — `bun install` is idempotent (~200ms no-op on a
-# populated lockfile). The legacy `gate_on` hash gate was deleted in
+# populated lockfile). Regenerate and commit bun.lock after dependency edits;
+# setup must not choose a different graph while booting a preview. The legacy `gate_on` hash gate was deleted in
 # alive-home/alive#2273 PR1.
-command = "bun install --no-progress"
+command = "bun install --frozen-lockfile --no-progress && bun run check:runtime"
 timeout_seconds = 180
 
 [setup.produces]

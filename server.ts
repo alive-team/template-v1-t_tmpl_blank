@@ -1,10 +1,10 @@
-import { Hono } from "hono"
-import { cors } from "hono/cors"
-import { Database } from "bun:sqlite"
+import { Database } from "bun:sqlite";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 
 // Initialize SQLite database (bun:sqlite is built-in, no npm package needed)
 // Database file is stored in the project root
-const db = new Database("data.db")
+const db = new Database("data.db");
 
 // Create tables if they don't exist
 db.exec(`
@@ -16,30 +16,30 @@ db.exec(`
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
   )
-`)
+`);
 
-const app = new Hono()
+const app = new Hono();
 
 // CORS for dev (Vite on different port)
 app.use(
-  "/api/*",
-  cors({
-    origin: origin => origin,
-    credentials: true,
-  }),
-)
+	"/api/*",
+	cors({
+		origin: (origin) => origin,
+		credentials: true,
+	}),
+);
 
 // Health check — matches `health_path = "/health"` in alive.toml so the
 // alive-workspaced daemon (and Claude's `probe_health` MCP tool, epic
 // alive-home/alive#2273 PR8) can verify the api service is responsive.
-app.get("/health", c => {
-  return c.json({ ok: true })
-})
+app.get("/health", (c) => {
+	return c.json({ ok: true });
+});
 
 // Legacy alias preserved for any existing callers under /api/*.
-app.get("/api/health", c => {
-  return c.json({ status: "ok", timestamp: new Date().toISOString() })
-})
+app.get("/api/health", (c) => {
+	return c.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
 // ============================================
 // ADD YOUR API ROUTES HERE
@@ -70,21 +70,21 @@ app.get("/api/health", c => {
 // Static file serving (production only)
 // ============================================
 
-const isProduction = process.env.NODE_ENV === "production"
+const isProduction = process.env.NODE_ENV === "production";
 
 if (isProduction) {
-  const { serveStatic } = await import("hono/bun")
-  app.use("/*", serveStatic({ root: "./dist" }))
-  app.get("*", serveStatic({ path: "./dist/index.html" }))
+	const { serveStatic } = await import("hono/bun");
+	app.use("/*", serveStatic({ root: "./dist" }));
+	app.get("*", serveStatic({ path: "./dist/index.html" }));
 }
 
 // ============================================
 
-const PORT = process.env.API_PORT || process.env.PORT || 4000
+const PORT = process.env.API_PORT || process.env.PORT || 4000;
 
-console.log(`${isProduction ? "Production" : "API"} server running on http://localhost:${PORT}`)
+console.log(`${isProduction ? "Production" : "API"} server running on http://localhost:${PORT}`);
 
 export default {
-  port: PORT,
-  fetch: app.fetch,
-}
+	port: PORT,
+	fetch: app.fetch,
+};
