@@ -56,3 +56,9 @@ Add API routes in `server.ts`. The SQLite database (`data.db`) is available via 
 - `bun run serve` -- Production server
 - `bun run check` -- Lint + format check (Biome)
 - `bun run check:fix` -- Auto-fix lint/format issues
+
+## Reproducible dependencies
+
+Keep React and React DOM at the same exact version. Use `bun add react@<version> react-dom@<version>` and commit both `package.json` and `bun.lock` together. Daemon setup uses a frozen install and runs `bun run check:runtime` before starting Vite; editing a dependency without updating the lock must fail startup.
+
+Run `bun run check`, `bun run type-check`, `bun run test`, `bun run check:runtime`, and `bun run build` before publishing a template change. The CI matrix covers the deployed Bun 1.2.12 runtime and Bun 1.3.11.
